@@ -60,14 +60,7 @@ public class Tester implements Serializable {
         return devices;
     }
 
-
     public List<Bug> getBugs() {
         return bugs;
-    }
-    
-    public void addDevice(Device device) {
-        if (this.devices == null)
-            this.devices = new ArrayList<>();
-        this.devices.add(device);
     }
 }

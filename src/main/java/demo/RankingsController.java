@@ -71,9 +71,7 @@ public class RankingsController {
 	@RequestMapping(value="/rankings", method=RequestMethod.POST)
 	public ResponseEntity<List<TesterBugsRanking>> getRankings(@RequestBody RankingsInput countriesDevices) {
 		TesterRepository repo = new TesterRepositoryImpl();
-		
 		List<TesterBugsRanking> rankings = repo.findByCountriesInAndDevicesIn(countriesDevices.getCountries(), countriesDevices.getDevices());
-		
 		return new ResponseEntity<List<TesterBugsRanking>>(rankings, HttpStatus.OK);
 	}
 }

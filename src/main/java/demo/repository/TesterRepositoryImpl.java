@@ -9,6 +9,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.ImprovedNamingStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 
@@ -17,6 +18,7 @@ import com.mysema.query.jpa.hibernate.HibernateQuery;
 import com.mysema.query.types.Predicate;
 import com.mysema.query.types.expr.BooleanExpression;
 
+import demo.HibernateUtil;
 import demo.QBug;
 import demo.QTester;
 import demo.Tester;
@@ -48,11 +50,7 @@ public class TesterRepositoryImpl implements TesterRepository {
 
 	@Override
 	public List<TesterBugsRanking> findByCountriesInAndDevicesIn(List<String> countries, List<String> devices) {
-		// TODO: Put the below in a factory class and method
-		Configuration configuration = new Configuration().setNamingStrategy(ImprovedNamingStrategy.INSTANCE).configure();
-		StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
-		SessionFactory factory = configuration.buildSessionFactory(builder.build());
-		Session session = factory.openSession();
+		Session session = HibernateUtil.getSession();
         
 		// QueryDsl types from code from domain entities
 		QTester tester = QTester.tester;
