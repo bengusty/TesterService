@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <style type="text/css">
+	</style>
+	
+  </head>
+  <body style="margin:6px;">
+  	<select id="countries" multiple></select>
+  	<select id="devices" multiple></select>
+  	<button id="btn_post" type="button"> POST </button>
+  	
+  	<div id="results" style="display:none">
+  	
+  	</div>
+	
+	<script src="js/jquery-2.1.4.min.js"></script>
+	<script>
+	$(document).ready(function() {
+		// IIFEs to load countries and devices lists
+		(function loadCountries() {
+			$.ajax({
+				url: "/countries"
+			}).done(function(data) {
+				console.log("countries " + data);	
+				$(data).each(function(index, item) {
+					$("#countries").append("<option value='" + item + "'>" + item + "</option>");
+				});
+			}).fail(function(jqXHR, textStatus) {
+				console.log("Error retrieving countries list from server: " + textStatus + "; " + jqXHR);
+			});
+		})();
+		(function loadDevices() {
+			$.ajax({
+				url: "/devices"
+			}).done(function(data) {
+				console.log("devices " + data);	
+				$(data).each(function(i, item) {
+					$("#devices").append("<option value='" + item + "'>" + item + "</option>");
+				});
+			}).fail(function(jqXHR, textStatus) {
+				console.log("Error retrieving devices list from server: " + textStatus + "; " + jqXHR);
+			});
+		})();
+		
+		$("#btn_post").click(function() {
+			var devices = []; 
+			$('#devices :selected').each(function(i, selected){ 
+			  devices.push($(selected).text()); 
+			});
+			console.log("selected devices " + devices);
+			
+			var countries = []; 
+			$('#countries :selected').each(function(i, selected){ 
+				countries.push($(selected).text()); 
+			});			
+			console.log("selected countries " + countries);
+			
+			$.ajax({
+				url: "/rankings",
+				data: JSON.stringify({"countries": countries, "devices": devices}),
+				type: "POST",
+				headers: { 
+					'Accept': 'application/json',
+					'Content-Type': 'application/json' 
+				}
+			}).done(function(data) {
+				console.log("rankings " + data);
+				$("#results").html("");
+				$("#results").show();
+				$(data).each(function(i, item) {
+					$("#results").append("<p>Name: " + item.firstName + " " + item.lastName + "<p>");
+					$("#results").append("<p>Total bugs reported for chosen devices: " + item.totalBugsCount + "<p>");
+					$("#results").append("<p>Bugs reported  by device<p>");
+					$.map(item.bugsCountByDevice, function(count, device) { 
+						$("#results").append("<p>" + device + ": " + count + "<p>");
+					});
+				});
+			}).fail(function(jqXHR, textStatus) {
+				console.log("Error retrieving rankings list from server: " + textStatus + "; " + jqXHR);
+			});
+		});
+	});
+	</script>
+  </body>
+</html>

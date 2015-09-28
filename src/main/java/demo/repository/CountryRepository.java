@@ -1,0 +1,10 @@
+package demo.repository;
+
+import demo.Country;
+
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.CrudRepository;
+
+public interface CountryRepository extends CrudRepository<Country, Long> {
+    Iterable<Country> findAll(Sort sort);
+}
